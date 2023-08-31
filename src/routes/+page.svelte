@@ -1,7 +1,6 @@
 <script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+	export let data;
+  	let selectedItem = 0;
 </script>
 
 <svelte:head>
@@ -9,51 +8,70 @@
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
+<div class="container">
+	<div class="parts" id="child1">
 
-		to your new<br />SvelteKit app
-	</h1>
+	</div>
 
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
+	<div class="parts" id="child2">
+		{#each data.items as item, index (item.name)}
+		<button class="item" on:click={() => {
+			selectedItem = index
+		}} >
+			<img src={item.image.full} alt={item.name} width=24 height=24 />
+		</button>
+		{/each}
 
-	<Counter />
-</section>
+	</div>
+	
+	<div class="parts" id="child3">
+		{#if data.items[selectedItem]}
+		<div class="itemCard">
+
+			<h1>{data.items[selectedItem].name}</h1>
+			<img src={data.items[selectedItem].image.full} alt={data.items[selectedItem].name} width=64 height=64 />
+			<div class="itemCardDescription">
+				{@html data.items[selectedItem].description}
+			</div>
+		</div>
+		{/if}
+
+	</div>
+</div>
 
 <style>
-	section {
+	.container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		height: 100vh;
+	}
+
+	.itemCard {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		flex: 0.6;
 	}
 
-	h1 {
-		width: 100%;
+	.itemCardDescription {
+		width: 90%;
+	}
+	.item {
+		width: 36px;
+		height: 36px;
 	}
 
-	.welcome {
-		display: block;
-		position: relative;
+	.parts {
 		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
+		display: flex;
+		justify-content: center;
 	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
+	#child2 {
+		border-left: hsla(0,0%,100%,0.2) solid 1px;
+		border-right: hsla(0,0%,100%,0.2) solid 1px;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
 	}
 </style>
