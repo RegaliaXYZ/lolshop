@@ -1,10 +1,12 @@
 import type { PageServerLoad } from './$types';
 
 interface Item {
+	id: string;
 	name: string;
 	description: string;
 	colloq: string;
 	plaintext: string;
+	from: string[];
 	into: string[];
 	image: {
 		full: string;
@@ -39,7 +41,7 @@ interface Tree {
 	tags: string[];
 }
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async () => {
 	const versions = await fetch('https://ddragon.leagueoflegends.com/api/versions.json').then(
 		(res) => res.json()
 	);
@@ -54,9 +56,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		const item = items.data[key] as Item;
 		if (item.gold.purchasable == false && item.gold.total == 0) continue;
 		if (item.maps['30'] == true || item.maps['11'] == false) continue;
-		if (key == '4403') {
-			console.log(item);
-		}
+		item.id = key;
 		item.image.full = `http://ddragon.leagueoflegends.com/cdn/${version}/img/item/${item.image.full}`;
 		itemsArray.push(item);
 	}
@@ -65,6 +65,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		const tree = items.tree[key] as Tree;
 		filters.push(tree);
 	}
+	console.log(itemsArray);
+	console.log(filters);
 	return {
 		patch: version,
 		items: itemsArray,
